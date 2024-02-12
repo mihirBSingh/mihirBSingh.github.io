@@ -5,15 +5,15 @@ about:
   template: jolla
   links:
     - icon: twitter
-      text: Twitter
+      text: I don't really have twitter.
       href: https://twitter.com
     - icon: linkedin
-      text: LinkedIn
-      href: https://linkedin.com
+      text: Here is my LinkedIn!
+      href: http://www.linkedin.com/in/mihirbsingh
     - icon: github
-      text: Github
-      href: https://github.com
+      text: Here is my github!
+      href: https://github.com/mihirBSingh
 
 ---
 
-About this blog
+My name is Mihir Singh
