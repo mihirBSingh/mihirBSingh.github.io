@@ -3,6 +3,7 @@
     "listing": "/index.html",
     "items": [
       "/posts/classifying-palmer-penguins/index.html",
+      "/posts/implementing-perceptron/index.html",
       "/posts/new-test-post/index.html",
       "/posts/example-blog-post/index.html"
     ]
