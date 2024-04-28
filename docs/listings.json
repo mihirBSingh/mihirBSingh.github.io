@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/logistic-regression/index.html",
       "/posts/replication-study/index.html",
       "/posts/classifying-palmer-penguins/index.html",
       "/posts/implementing-perceptron/index.html",

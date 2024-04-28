@@ -213,7 +213,7 @@ background-size: cover;
 <h2 class="anchored" data-anchor-id="implementation">Implementation</h2>
 <p>The code for the perceptron is <a href="https://github.com/mihirBSingh/mihirBSingh.github.io/blob/main/posts/implementing-perceptron/perceptron.py">here</a>.</p>
 <p>For our experiments we will use data from the in-class perceptron warmup which we know is linearly separable.</p>
-<div id="cell-3" class="cell" data-execution_count="260">
+<div id="cell-4" class="cell" data-execution_count="260">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pyplot <span class="im">as</span> plt</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>plt.style.use(<span class="st">'seaborn-v0_8-whitegrid'</span>)</span>
@@ -253,7 +253,7 @@ background-size: cover;
 </div>
 </div>
 <p>From this we get a visual confirmation that our data is linearly separable. We should first check if our perceptron probably works by running it on our minimal training loop. We know it works if our perceptron converges and we achieve a loss of 0.</p>
-<div id="cell-5" class="cell" data-execution_count="261">
+<div id="cell-6" class="cell" data-execution_count="261">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> perceptron <span class="im">import</span> Perceptron, PerceptronOptimizer</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># instantiate a model and an optimizer</span></span>
@@ -295,7 +295,7 @@ background-size: cover;
 <section id="experiment-1" class="level3">
 <h3 class="anchored" data-anchor-id="experiment-1">Experiment 1</h3>
 <p>We can use the same data from the example above (since we know that the data is linearly separable) and visualize the process of a perceptron finding a line the separates the data.</p>
-<div id="cell-7" class="cell" data-execution_count="262">
+<div id="cell-8" class="cell" data-execution_count="262">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Code below provided by Professor Phil Chodrow</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pyplot <span class="im">as</span> plt</span>
@@ -318,7 +318,7 @@ background-size: cover;
 <span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    ax.<span class="bu">set</span>(xlabel <span class="op">=</span> <span class="vs">r"$x_1$"</span>, ylabel <span class="op">=</span> <span class="vs">r"$x_2$"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Just to be sure, let’s look at the data first to confirm it looks linearly separable visually.</p>
-<div id="cell-9" class="cell" data-execution_count="263">
+<div id="cell-10" class="cell" data-execution_count="263">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">1</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>plot_perceptron_data(X,y, ax)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
@@ -330,7 +330,7 @@ background-size: cover;
 </div>
 </div>
 <p>Indeed, our data looks linearly separable. Now let’s run our perceptron.</p>
-<div id="cell-11" class="cell" data-execution_count="264">
+<div id="cell-12" class="cell" data-execution_count="264">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Parts of code for visualization provided by Professor Phil Chodrow</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>torch.manual_seed(<span class="dv">1234567</span>)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -392,7 +392,7 @@ background-size: cover;
 </div>
 </div>
 <p>We can see that our perceptron becomes more accurate, converging on the correct answer. Another way to visualize our perceptron’s accuracy is through a loss graph.</p>
-<div id="cell-13" class="cell" data-execution_count="265">
+<div id="cell-14" class="cell" data-execution_count="265">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Loss graph</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> loss_graph(loss_vec):</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    plt.plot(loss_vec, marker<span class="op">=</span><span class="st">'o'</span>, linestyle<span class="op">=</span><span class="st">'-'</span>)</span>
@@ -416,7 +416,7 @@ background-size: cover;
 </div>
 <p>We see that eventually (after may steps) we eventually do reach a loss of 0., but our loss graph shows the accuracy of the perceptron for every step over time.</p>
 <p>Let’s see what the decision boundary looks like on the final iteration.</p>
-<div id="cell-15" class="cell" data-execution_count="266">
+<div id="cell-16" class="cell" data-execution_count="266">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">1</span>, figsize <span class="op">=</span> (<span class="dv">4</span>, <span class="dv">4</span>))</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(xlim <span class="op">=</span> (<span class="op">-</span><span class="dv">1</span>, <span class="dv">2</span>), ylim <span class="op">=</span> (<span class="op">-</span><span class="dv">1</span>, <span class="dv">2</span>))</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>plot_perceptron_data(X, y, ax)</span>
@@ -435,12 +435,12 @@ background-size: cover;
 <h3 class="anchored" data-anchor-id="experiment-2">Experiment 2</h3>
 <p>We’ve looked at the perceptron’s accuracy when we know that the data is linearly separable. Now we can look at how a perceptron will perform when we know that the data is not linearly separable.</p>
 <p>To do this, we first need to create data that we know is not linearly separable. We can use the same perceptron_data function from before, but we can instead set it so that the noise is higher. This has the effect of points from the different classes crossing each other’s boundaries and thus making the data not linearly separable.</p>
-<div id="cell-18" class="cell" data-execution_count="267">
+<div id="cell-19" class="cell" data-execution_count="267">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> perceptron_data(noise<span class="op">=</span><span class="fl">0.5</span>)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>y_ <span class="op">=</span> (y<span class="op">+</span><span class="dv">1</span>)<span class="op">/</span><span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Let’s also plot the training and testing data for a visual inspection.</p>
-<div id="cell-20" class="cell" data-execution_count="268">
+<div id="cell-21" class="cell" data-execution_count="268">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">1</span>)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>plot_perceptron_data(X,y, ax)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
@@ -453,7 +453,7 @@ background-size: cover;
 </div>
 <p>Now we can visually see that out data is not perfectly linearly separable.</p>
 <p>Let’s begin training our perceptron. We will loop through for 1000 iterations. Let’s see what we come up with after 500 and then finally when we finish at 1000 iterations</p>
-<div id="cell-22" class="cell" data-execution_count="269">
+<div id="cell-23" class="cell" data-execution_count="269">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize perceptron</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> Perceptron()</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>opt <span class="op">=</span> PerceptronOptimizer(p)</span>
@@ -490,7 +490,7 @@ background-size: cover;
 </div>
 </div>
 <p>It is somewhat accurate, but it’s a stretch to say perfect like in experiment 1. Let’s go to 1000 iterations. For the final iteration, we will also plot the decision boundary of the perceptron before we stopped iterating.</p>
-<div id="cell-24" class="cell" data-execution_count="270">
+<div id="cell-25" class="cell" data-execution_count="270">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Training loop to 1000</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>iterations <span class="op">=</span> <span class="dv">0</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>loss_vec <span class="op">=</span> []</span>
@@ -522,7 +522,7 @@ background-size: cover;
 </div>
 </div>
 <p>We see here that our loss decreases slightly. Let’s take a look at the loss over time.</p>
-<div id="cell-26" class="cell" data-execution_count="271">
+<div id="cell-27" class="cell" data-execution_count="271">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">len</span>(loss_vec))</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>plt.plot(loss_vec, marker<span class="op">=</span><span class="st">'o'</span>, linestyle<span class="op">=</span><span class="st">'-'</span>)</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Loss Graph: Experiment 2'</span>)</span>
@@ -548,7 +548,7 @@ final loss:  0.1066666692495346</code></pre>
 <h3 class="anchored" data-anchor-id="experiment-3">Experiment 3</h3>
 <p>Now we will look at the perceptron algorithm working in more than two dimensions. To do this, we can run our perceptron algorithm on data with 5 features.</p>
 <p>First we need to generate perceptron data with 5 features. To do this we need to modify the perceptron_data function that we have been using. We’ll also make the noise 0.35 (which is just the average of the noises from the pervious experiments)</p>
-<div id="cell-28" class="cell" data-execution_count="272">
+<div id="cell-29" class="cell" data-execution_count="272">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> multi_dim_perceptron_data(n_points <span class="op">=</span> <span class="dv">300</span>, noise <span class="op">=</span> <span class="fl">0.35</span>, dim<span class="op">=</span><span class="dv">5</span>):</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> torch.arange(n_points) <span class="op">&gt;=</span> <span class="bu">int</span>(n_points<span class="op">/</span><span class="dv">2</span>)</span>
@@ -563,7 +563,7 @@ final loss:  0.1066666692495346</code></pre>
 <span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> multi_dim_perceptron_data(dim<span class="op">=</span><span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can look at the score of our perceptron over the training period to help us answer if the data is linearly separable. First we need to run our algorithm.</p>
-<div id="cell-30" class="cell" data-execution_count="273">
+<div id="cell-31" class="cell" data-execution_count="273">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># rerun perceptron for experiment 3</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># initialize a perceptron </span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> Perceptron()</span>
@@ -584,7 +584,7 @@ final loss:  0.1066666692495346</code></pre>
 <span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>    loss_vec.append(loss)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now to check if the data is linearly separable, we need to check if all the dot products between the weight vector w and feature vector xi are the same signs. This is because if the score and the target vector have opposite signs then the perceptron needs to update and we have not found a perfectly correct answer.</p>
-<div id="cell-32" class="cell" data-execution_count="274">
+<div id="cell-33" class="cell" data-execution_count="274">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>classification <span class="op">=</span> p.score(X)<span class="op">*</span>y</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>classification.<span class="bu">min</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="274">
@@ -593,7 +593,7 @@ final loss:  0.1066666692495346</code></pre>
 </div>
 <p>Since our minimum value in classification is 0.0`68 we know that for any value of i, &lt;w,xi&gt; &gt; 0 if y = 1, and thus we have a linearly separable dataset.</p>
 <p>To be extra sure we can also look at the loss and see if the perceptron converges such that it comes to the right answer and has a loss of 0.</p>
-<div id="cell-34" class="cell" data-execution_count="275">
+<div id="cell-35" class="cell" data-execution_count="275">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>plt.plot(loss_vec, marker<span class="op">=</span><span class="st">'o'</span>, linestyle<span class="op">=</span><span class="st">'-'</span>)</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Loss Graph: Experiment 3'</span>)</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Step'</span>)</span>
@@ -624,7 +624,7 @@ final loss:  0.1066666692495346</code></pre>
 <h3 class="anchored" data-anchor-id="experiment-1-1">Experiment 1</h3>
 <p>We should first check to see that our minibatch perceptron performs similarly to a regular perceptron when it is only looking at one point (just like a regular perceptron). In this case, k = 1.</p>
 <p>We will first look at how a minibatch perceptron performs compared to a regular perceptron when the data is linearly separable. To do this we will see if the minibatch perceptron converges to a loss of 0 and look at its loss graph.</p>
-<div id="cell-37" class="cell" data-execution_count="276">
+<div id="cell-38" class="cell" data-execution_count="276">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> perceptronMB <span class="im">import</span> PerceptronMB, PerceptronOptimizerMB</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>perceptron_data(n_points <span class="op">=</span> <span class="dv">300</span>, noise <span class="op">=</span> <span class="fl">0.2</span>)</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -671,7 +671,7 @@ final loss:  tensor(0.)</code></pre>
 </div>
 <p>It takes more steps, but we do find that the perceptron converges to a loss of 0.</p>
 <p>Now let’s look at how the minibatch perceptron performs with overlapping data.</p>
-<div id="cell-39" class="cell" data-execution_count="277">
+<div id="cell-40" class="cell" data-execution_count="277">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> perceptron_data(noise<span class="op">=</span><span class="fl">0.5</span>)</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="co"># instantiate a model and an optimizer</span></span>
@@ -721,7 +721,7 @@ final loss:  tensor(0.)</code></pre>
 <section id="experiment-2-1" class="level2">
 <h2 class="anchored" data-anchor-id="experiment-2-1">Experiment 2</h2>
 <p>Now looking at 5 dimensional data where k=10, we should also find that the minibatch perceptron finds a separating line.</p>
-<div id="cell-41" class="cell" data-execution_count="278">
+<div id="cell-42" class="cell" data-execution_count="278">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> perceptronMB <span class="im">import</span> PerceptronMB, PerceptronOptimizerMB</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> multi_dim_perceptron_data(n_points <span class="op">=</span> <span class="dv">300</span>, noise <span class="op">=</span> <span class="fl">0.2</span>, dim<span class="op">=</span><span class="dv">5</span>)</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -770,7 +770,7 @@ final loss:  tensor(0.)</code></pre>
 <section id="experiment-3-1" class="level3">
 <h3 class="anchored" data-anchor-id="experiment-3-1">Experiment 3</h3>
 <p>Now what happens if k = n, that is we check the entire data set at once. Even if the data is not linearly separable, our minibatch perceptron should be able to converge.</p>
-<div id="cell-43" class="cell" data-execution_count="279">
+<div id="cell-44" class="cell" data-execution_count="279">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> perceptronMB <span class="im">import</span> PerceptronMB, PerceptronOptimizerMB</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> perceptron_data(n_points <span class="op">=</span> <span class="dv">300</span>, noise <span class="op">=</span> <span class="fl">0.5</span>)</span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="co"># instantiate a model and an optimizer</span></span>
