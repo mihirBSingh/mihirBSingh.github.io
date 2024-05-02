@@ -48,6 +48,21 @@ class LinearModel:
 class LogisticRegression(LinearModel):
         
     def loss(self, X, y):
+        """
+        Compute the empirical risk L(w) using the logistic loss function
+
+        ARGUMENTS: 
+            X, torch.Tensor: the feature matrix. X.size() == (n, p), 
+            where n is the number of data points and p is the 
+            number of features. This implementation always assumes 
+            that the final column of X is a constant column of 1s. 
+            
+            y, torch.Tensor: the vector of target labels (0 or 1). y.size() = (n,)
+
+        RETURNS: 
+            torch.Tensor: float: the loss L(w)
+        """
+        
         # s is score
         s = self.score(X)
         
@@ -58,6 +73,21 @@ class LogisticRegression(LinearModel):
         return torch.mean(-y*torch.log(sigma) - (1-y)*torch.log(1-sigma))
     
     def grad(self, X, y):
+        """
+        Computes the gradient of the empirical risk L(w).
+
+        ARGUMENTS: 
+            X, torch.Tensor: the feature matrix. X.size() == (n, p), 
+            where n is the number of data points and p is the 
+            number of features. This implementation always assumes 
+            that the final column of X is a constant column of 1s. 
+            
+            y, torch.Tensor: the vector of target labels (0 or 1). y.size() = (n,)
+
+        RETURNS: 
+            torch.Tensor: float: the empirical risk gradient
+        """
+        
         s = self.score(X)
         
         sigma = 1/(1+torch.exp(-s))
@@ -72,6 +102,23 @@ class GradientDescentOptimizer(LogisticRegression):
         self.model = model
         
     def step(self, X, y, alpha, beta):
+        """
+        Implements gradient descent with momentum (spicy gradient descent) to compute the update of model's weight vector for a single step 
+
+        ARGUMENTS: 
+            X, torch.Tensor: the feature matrix. X.size() == (n, p), 
+            where n is the number of data points and p is the 
+            number of features. This implementation always assumes 
+            that the final column of X is a constant column of 1s. 
+            
+            y, torch.Tensor: the vector of target labels (0 or 1). y.size() = (n,)
+            
+            alpha, float: the learning rate
+            beta, float: the momentum parameter
+
+        RETURNS: 
+            torch.Tensor: float: the loss L(w)
+        """
         
         grad = self.model.grad(X, y)
         weight = self.model.w 
