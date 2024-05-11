@@ -203,7 +203,7 @@ background-size: cover;
 <section id="grabbing-the-data" class="level1">
 <h1>Grabbing the Data</h1>
 <p>Before we start, we need to first import the training data. Our target variable will be ‘loan_status.’</p>
-<div id="cell-1" class="cell" data-execution_count="56">
+<div id="cell-1" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
@@ -220,7 +220,7 @@ background-size: cover;
 <section id="exploring-the-data" class="level2">
 <h2 class="anchored" data-anchor-id="exploring-the-data">Exploring the Data</h2>
 <p>Now that we have some data to work with, let’s try and find some patterns. We can start by creating a summary table comparing the avereage loan amount by homeownership status of an individual.</p>
-<div id="cell-3" class="cell" data-execution_count="57">
+<div id="cell-3" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>summaryTable <span class="op">=</span> df_train.groupby([<span class="st">'person_home_ownership'</span>]).aggregate(Loan_Average <span class="op">=</span>(<span class="st">'loan_amnt'</span>, <span class="st">'mean'</span>))</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(summaryTable)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -234,7 +234,7 @@ RENT                    8843.507973</code></pre>
 </div>
 <p>We see here that those who have a mortgage have the highest average loan amount. This could be due to the fact that those with a mortgage have a higher income and are more likely to be approved for a larger loan. However, the largest loan average was for those whose home ownership status was ‘other.’ This could be students with loans for educational purposes living in college dorms.</p>
 <p>We can also compare an individual’s age and their loan amount. To do this we will group individuals into quartiles.</p>
-<div id="cell-5" class="cell" data-execution_count="58">
+<div id="cell-5" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># there is someone 144 years old - might get rid of that outlier</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>df_train_age_copy <span class="op">=</span> df_train.copy()</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>df_train_age_copy <span class="op">=</span> df_train_age_copy[df_train_age_copy[<span class="st">'person_age'</span>] <span class="op">!=</span> <span class="dv">144</span>]</span>
@@ -263,7 +263,7 @@ Name: loan_amnt, dtype: float64</code></pre>
 <div class="cell-output cell-output-stderr">
 <pre><code>/Users/mihirsingh/anaconda3/envs/ml-0451/lib/python3.9/site-packages/seaborn/categorical.py:641: FutureWarning: The default of observed=False is deprecated and will be changed to True in a future version of pandas. Pass observed=False to retain current behavior or observed=True to adopt the future default and silence this warning.
   grouped_vals = vals.groupby(grouper)
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_14417/2138611228.py:17: FutureWarning: The default of observed=False is deprecated and will be changed to True in a future version of pandas. Pass observed=False to retain current behavior or observed=True to adopt the future default and silence this warning.
+/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_26661/2138611228.py:17: FutureWarning: The default of observed=False is deprecated and will be changed to True in a future version of pandas. Pass observed=False to retain current behavior or observed=True to adopt the future default and silence this warning.
   print("average loan amt by", df_train_age_copy.groupby('age_quartile')['loan_amnt'].mean())</code></pre>
 </div>
 <div class="cell-output cell-output-display">
@@ -276,7 +276,7 @@ Name: loan_amnt, dtype: float64</code></pre>
 </div>
 <p>While there is a slight variation between the loan amounts and age, it is not that strong. It is also interesting to note that the data includes someone who is 144 years old (though this is probably an error). This outlier was removed from the data for this plot.</p>
 <p>We might not have been able to find a strong correlation between age and loan amount, but we might have better luck looking at whether those who have been employed for a longer period of time are more likely to have a large line of credit. Like before, we will group individuals into quartiles based on employment length.</p>
-<div id="cell-7" class="cell" data-execution_count="59">
+<div id="cell-7" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># there is someone working for 144 years - might get rid of that outlier</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>df_train_work_copy <span class="op">=</span> df_train.copy()</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>df_train_work_copy <span class="op">=</span> df_train_work_copy[df_train_work_copy[<span class="st">'person_emp_length'</span>] <span class="op">!=</span> <span class="dv">144</span>]</span>
@@ -296,6 +296,12 @@ Name: loan_amnt, dtype: float64</code></pre>
 <span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"average loan amt by employment length"</span>, df_train_work_copy.groupby(<span class="st">'employment_length_quartile'</span>)[<span class="st">'loan_amnt'</span>].mean())</span>
 <span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>df_train_work_copy[<span class="st">'employment_length_quartile'</span>] <span class="op">=</span> pd.qcut(df_train_work_copy[<span class="st">'person_emp_length'</span>], q <span class="op">=</span> [<span class="dv">0</span>, <span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="dv">1</span>], labels <span class="op">=</span> [firstQuartile, secondQuartile, thirdQuartile, fourthQuartile])</span>
 <span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_train_work_copy[<span class="st">'person_emp_length'</span>].<span class="bu">max</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/Users/mihirsingh/anaconda3/envs/ml-0451/lib/python3.9/site-packages/seaborn/categorical.py:641: FutureWarning: The default of observed=False is deprecated and will be changed to True in a future version of pandas. Pass observed=False to retain current behavior or observed=True to adopt the future default and silence this warning.
+  grouped_vals = vals.groupby(grouper)
+/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_26661/1445965932.py:17: FutureWarning: The default of observed=False is deprecated and will be changed to True in a future version of pandas. Pass observed=False to retain current behavior or observed=True to adopt the future default and silence this warning.
+  print("average loan amt by employment length", df_train_work_copy.groupby('employment_length_quartile')['loan_amnt'].mean())</code></pre>
+</div>
 <div class="cell-output cell-output-stdout">
 <pre><code>average loan amt by employment length employment_length_quartile
 0.0 to 2.0       8940.104406
@@ -304,12 +310,6 @@ Name: loan_amnt, dtype: float64</code></pre>
 7.0 to 123.0    10805.937675
 Name: loan_amnt, dtype: float64
 123.0</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>/Users/mihirsingh/anaconda3/envs/ml-0451/lib/python3.9/site-packages/seaborn/categorical.py:641: FutureWarning: The default of observed=False is deprecated and will be changed to True in a future version of pandas. Pass observed=False to retain current behavior or observed=True to adopt the future default and silence this warning.
-  grouped_vals = vals.groupby(grouper)
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_14417/1445965932.py:17: FutureWarning: The default of observed=False is deprecated and will be changed to True in a future version of pandas. Pass observed=False to retain current behavior or observed=True to adopt the future default and silence this warning.
-  print("average loan amt by employment length", df_train_work_copy.groupby('employment_length_quartile')['loan_amnt'].mean())</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div>
@@ -326,7 +326,7 @@ Name: loan_amnt, dtype: float64
 <h1>Building a Model</h1>
 <p>Now that we have explored the data and have a general understanding of what we are working with, we can begin creating a model that predicts whether a prospective borrower is likely to default on a given loan.</p>
 <p>We will first get rid of our ‘loan grade’ column from the data as well as the aged 144 individual since this person is an outlier. Then we will implement logistic regression and cross validate the model. We will have a model based on 5 features, since we don’t want to include too many and overfit our model.</p>
-<div id="cell-9" class="cell" data-execution_count="60">
+<div id="cell-9" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> itertools <span class="im">import</span> combinations</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> cross_val_score</span>
@@ -381,14 +381,14 @@ Name: loan_amnt, dtype: float64
 </div>
 <p>Our best 5 features seem to be age, home-ownership, employment-length, loan as a percent of income, and the length of a person’s credit history. This seems to be doing a decent job of predicting whether a person will default on a loan.</p>
 <p>Let’s get our weight vector for our model.</p>
-<div id="cell-11" class="cell" data-execution_count="61">
+<div id="cell-11" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># train model based on best features</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>LR.fit(df_model[LRBestCols], df_model[<span class="st">'loan_status'</span>])</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># getting weight vector from our model</span></span>
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> LR.coef_[<span class="dv">0</span>]</span>
 <span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>w</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="61">
+<div class="cell-output cell-output-display" data-execution_count="7">
 <pre><code>array([-8.07133566e-04,  3.36542470e-01, -1.99919415e-02,  7.93852091e+00,
        -1.88709181e-03])</code></pre>
 </div>
@@ -402,7 +402,7 @@ Name: loan_amnt, dtype: float64
 </ol>
 <p>We will use these assumptions to determine the optimal threshold for our model.</p>
 <p>First, we should look at an Receiver Operating Characteristic (ROC) curve to visually see our model’s performance at predicting whether or not an individual will default.</p>
-<div id="cell-13" class="cell" data-execution_count="62">
+<div id="cell-13" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># computing and plotting ROC curve - from Professor Phil Chodrow</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> linear_score(X, w):</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> X<span class="op">@</span>w</span>
@@ -441,13 +441,13 @@ Name: loan_amnt, dtype: float64
 <p>The ROC curve does an ok job at predicting whether an individual will default. Ideally we would see the solid line curve farther towards the top left of the plot.</p>
 <p>Now we can look at the expected gain as a function of the threshold. This curve will help us determine which threshold is optimal for our model.</p>
 <p>However, in order to first do this, we need to calculate the profit the bank might make on a loan. This itself depends on the probability someone will repay or default.</p>
-<div id="cell-15" class="cell" data-execution_count="63">
+<div id="cell-15" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get probability of being paid and add to df</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>probabilityPaid <span class="op">=</span> LR.predict_proba(df_model[LRBestCols])</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>df_model[<span class="st">'probabilityPaid'</span>] <span class="op">=</span> probabilityPaid[:,<span class="dv">0</span>].tolist()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now that we have the probability that someone will repay. We can calculate the profit for the bank for each individual. We will only look at people whose probability is above a certain threshold. From there, we will look and see if they defaulted or not and calculate the profit based off these values.</p>
-<div id="cell-17" class="cell" data-execution_count="64">
+<div id="cell-17" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> findProfitByThreshold(t, df_model):</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    aboveThreshold <span class="op">=</span> df_model[df_model[<span class="st">'probabilityPaid'</span>] <span class="op">&gt;</span> t].copy()</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    paid <span class="op">=</span> <span class="dv">0</span></span>
@@ -464,7 +464,7 @@ Name: loan_amnt, dtype: float64
 <span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>            default <span class="op">+=</span> loanAmnt<span class="op">*</span>(<span class="dv">1</span> <span class="op">+</span> <span class="fl">0.25</span><span class="op">*</span>(loanInt<span class="op">/</span><span class="dv">100</span>))<span class="op">**</span><span class="dv">3</span> <span class="op">-</span> <span class="fl">1.7</span><span class="op">*</span>loanAmnt </span>
 <span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> paid <span class="op">+</span> default</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-18" class="cell" data-execution_count="65">
+<div id="cell-18" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>thresholds <span class="op">=</span> np.linspace(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">100</span>)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>profits <span class="op">=</span> []</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> t <span class="kw">in</span> thresholds:</span>
@@ -479,11 +479,13 @@ Name: loan_amnt, dtype: float64
 </div>
 </div>
 <p>We see that our make profit occurs when we have a threshold around the 0.5 range. We can find the exact value by finding the maximum value of the curve.</p>
-<div id="cell-20" class="cell" data-execution_count="66">
+<div id="cell-20" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># find best threshold</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Max profit of $</span><span class="sc">{</span><span class="bu">max</span>(profits)<span class="sc">}</span><span class="ss"> at threshold =</span><span class="sc">{</span>profits<span class="sc">.</span>index(<span class="bu">max</span>(profits))<span class="op">/</span><span class="dv">100</span><span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Max profit of $</span><span class="sc">{</span><span class="bu">max</span>(profits)<span class="sc">}</span><span class="ss"> at threshold = </span><span class="sc">{</span>profits<span class="sc">.</span>index(<span class="bu">max</span>(profits))<span class="op">/</span><span class="dv">100</span><span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Max profit/borrower of $</span><span class="sc">{</span><span class="bu">max</span>(profits)<span class="op">/</span><span class="bu">len</span>(df_model[df_model[<span class="st">'probabilityPaid'</span>] <span class="op">&gt;=</span> <span class="fl">0.53</span>])<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Max profit of $32406222.49662961 at threshold =0.53</code></pre>
+<pre><code>Max profit of $32406222.49662961 at threshold = 0.53
+Max profit/borrower of $1566.9562640408883</code></pre>
 </div>
 </div>
 <p>So our best threshold is when the probability of repayment is 0.53. This is the point where the bank will make the most profit, earning $32406222.49.</p>
@@ -491,7 +493,7 @@ Name: loan_amnt, dtype: float64
 <section id="evaluating-our-model-from-the-banks-perspective" class="level2">
 <h2 class="anchored" data-anchor-id="evaluating-our-model-from-the-banks-perspective">Evaluating Our Model from the Bank’s Perspective</h2>
 <p>We will now evaluate our model on some test data. To do so, we will use the threshold we determined earlier of t=0.53. We will also have to encode the data before we can run our model.</p>
-<div id="cell-22" class="cell" data-execution_count="67">
+<div id="cell-22" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import data</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/PhilChodrow/ml-notes/main/data/credit-risk/test.csv"</span></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>df_test <span class="op">=</span> pd.read_csv(url)</span>
@@ -513,7 +515,7 @@ Name: loan_amnt, dtype: float64
 <span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>df_tc <span class="op">=</span> df_tc.dropna()</span>
 <span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a>df_tc[<span class="st">'person_emp_length'</span>] <span class="op">=</span> df_tc[<span class="st">'person_emp_length'</span>].astype(<span class="bu">int</span>)</span>
 <span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a>df_tc.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="67">
+<div class="cell-output cell-output-display" data-execution_count="13">
 <div>
 
 
@@ -612,7 +614,7 @@ Name: loan_amnt, dtype: float64
 </div>
 </div>
 <p>With the data all set up, we can use our model.</p>
-<div id="cell-24" class="cell" data-execution_count="68">
+<div id="cell-24" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># make predictions on probability individual will repay</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>probabilityPaid <span class="op">=</span> LR.predict_proba(df_tc[LRBestCols])</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>df_tc[<span class="st">'probabilityPaid'</span>] <span class="op">=</span> probabilityPaid[:,<span class="dv">0</span>].tolist()</span>
@@ -620,7 +622,7 @@ Name: loan_amnt, dtype: float64
 <span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co"># find profit</span></span>
 <span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>profit <span class="op">=</span> findProfitByThreshold(<span class="fl">0.53</span>,df_tc)</span>
 <span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>profit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="68">
+<div class="cell-output cell-output-display" data-execution_count="14">
 <pre><code>7697437.566609849</code></pre>
 </div>
 </div>
@@ -632,7 +634,7 @@ Name: loan_amnt, dtype: float64
 <ol type="1">
 <li>First we look at if it is more difficult for people in certain age groups to access credit under our model.</li>
 </ol>
-<div id="cell-26" class="cell" data-execution_count="69">
+<div id="cell-26" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># age group vs access to credit (model evaluation of probability individual will repay)</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co"># there is someone 144 years old - might get rid of that outlier</span></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>df_tc <span class="op">=</span> df_tc[df_tc[<span class="st">'person_age'</span>] <span class="op">!=</span> <span class="dv">144</span>]</span>
@@ -655,7 +657,7 @@ Name: loan_amnt, dtype: float64
 <pre><code>/Users/mihirsingh/anaconda3/envs/ml-0451/lib/python3.9/site-packages/seaborn/categorical.py:641: FutureWarning: The default of observed=False is deprecated and will be changed to True in a future version of pandas. Pass observed=False to retain current behavior or observed=True to adopt the future default and silence this warning.
   grouped_vals = vals.groupby(grouper)</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="69">
+<div class="cell-output cell-output-display" data-execution_count="15">
 <pre><code>Text(0, 0.5, 'Score')</code></pre>
 </div>
 <div class="cell-output cell-output-display">
@@ -670,7 +672,7 @@ Name: loan_amnt, dtype: float64
 <ol start="2" type="1">
 <li>We will now look at if it is more difficult to get a loan in order to pay for medical expenses. Here, we will look at approval rate by loan type and the percent each type of loan was repaid.</li>
 </ol>
-<div id="cell-28" class="cell" data-execution_count="70">
+<div id="cell-28" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># unencode loan intent</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>df_compare <span class="op">=</span> df_tc.copy()</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>df_compare[<span class="st">'loan_intent'</span>] <span class="op">=</span> encoder.inverse_transform(df_tc[<span class="st">'loan_intent'</span>])</span>
@@ -690,7 +692,7 @@ Name: loan_amnt, dtype: float64
 <div class="cell-output cell-output-stdout">
 <pre><code>&lt;class 'pandas.core.series.Series'&gt;</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="70">
+<div class="cell-output cell-output-display" data-execution_count="16">
 <div>
 
 
@@ -750,7 +752,7 @@ Name: loan_amnt, dtype: float64
 <ol start="3" type="1">
 <li>Finally, we will look at if a person’s income level impacts how easy it is for them to access credit under our model. To do this, we will look at the score our model generally gives an individual by income level.</li>
 </ol>
-<div id="cell-30" class="cell" data-execution_count="72">
+<div id="cell-30" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># income group vs access to credit</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="co"># group individuals into quartiles by age</span></span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>quartiles <span class="op">=</span> df_tc[<span class="st">'person_income'</span>].quantile([<span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>])</span>
@@ -770,7 +772,7 @@ Name: loan_amnt, dtype: float64
 <pre><code>/Users/mihirsingh/anaconda3/envs/ml-0451/lib/python3.9/site-packages/seaborn/categorical.py:641: FutureWarning: The default of observed=False is deprecated and will be changed to True in a future version of pandas. Pass observed=False to retain current behavior or observed=True to adopt the future default and silence this warning.
   grouped_vals = vals.groupby(grouper)</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="72">
+<div class="cell-output cell-output-display" data-execution_count="17">
 <pre><code>Text(0, 0.5, 'Score')</code></pre>
 </div>
 <div class="cell-output cell-output-display">
@@ -785,7 +787,7 @@ Name: loan_amnt, dtype: float64
 </section>
 <section id="discussion" class="level2">
 <h2 class="anchored" data-anchor-id="discussion">Discussion</h2>
-<p>Ultimately, I found that the threshold score was 0.53 and that the model was able to earn $7697437.56 in profit. I also found that the model tended to favor higher income individuals and was slightly biased against younger borrowers and borrowers seeking credit for medical reasons. We find that even with a simple formula for calculating bank profits, we were able to generate a large profit for the bank. This model’s decisions seemed fair from the perspective that there does not seem to outright discrimination of individuals. It is true there are slight biases against borrowers looking for a loan for medical purposes and younger borrowers, and while this would not be the case in an ideal world, it does make sense that these biases exist since these types of borrowers are probably less likely to repay. Finally, I learned how to choose an optimal threshold for my model as well as how to investigate the results of that decision.</p>
+<p>Ultimately, I found that the threshold score was 0.53 and that the model was able to earn $7697437.56 in profit. I also found that the model tended to favor higher income individuals and was slightly biased against younger borrowers and borrowers seeking credit for medical reasons. We find that even with a simple formula for calculating bank profits, we were able to generate a large profit for the bank. From the bank’s perspective, I believe that the model satisfies a test of sufficiency since it seems that the the features the model looks at like loan intent and income level are relevant to whether someone will repay their loan. This seems fair from the bank’s perspective because things like medical debt are riskier to repay and thus should be harder to get approved. However, from the borrower’s perspective, this could be seen as unfair since people need to access credit for tremendous medical costs and it is not really their fault that they must get these treatments, so they are punished for something out of their control when they try to access credit. From this we see that what is fair and reasonable from one perspective may not be from another. With this in mind, one could argue that the model both satisfies and fails a narrow view of fairness since the bank might argue that with all things being equal - people are likely to get the same score. Meanwhile, a borrower might argue that loan-intent is not really a feature that should be used since people who are similar in every way except loan intent will probably receive different scores. It all from which perspective you evaluate the model and who you ask. Finally, I learned how to choose an optimal threshold for my model as well as how to investigate the results of that decision.</p>
 
 
 </section>
