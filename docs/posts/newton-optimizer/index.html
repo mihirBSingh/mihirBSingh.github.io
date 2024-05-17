@@ -223,7 +223,7 @@ window.Quarto = {
 <p>Mihir Singh</p>
 <section id="implementing-newton-optimizer" class="level2">
 <h2 class="anchored" data-anchor-id="implementing-newton-optimizer">Implementing Newton Optimizer</h2>
-<p>The code for the Newton Optimizer can be found <a href="">here</a>.</p>
+<p>The code for the Newton Optimizer can be found <a href="https://github.com/mihirBSingh/mihirBSingh.github.io/blob/main/posts/newton-optimizer/optimizer.py">here</a>.</p>
 <div id="cell-1" class="cell" data-execution_count="61">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># imports</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> optimizer <span class="im">import</span> LogisticRegression, GradientDescentOptimizer, NewtonOptimizer</span>
@@ -233,6 +233,7 @@ window.Quarto = {
 </section>
 <section id="abstract" class="level2">
 <h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
+<p>In this blog post, we will implement the Newton Optimizer for Logistic Regression. The Newton Optimizer is a second-order optimization algorithm that uses the Hessian matrix to find the optimal weights for the logistic regression model. We will implement the Newton Optimizer by adding to our previous implementation of logistic regression test it on a simple dataset to ensure that it behaves correctly. These experiments will include determining if the Newton Optimizer converges to the optimal weights giving a small alpha and if it converges faster than the Gradient Descent Optimizer. We will also check if it does not converge given a large alpha. Finally, we will calculate the computational cost of the Newton Optimizer and a Gradient Descent Optimizer’s before comparing and analyzing their costs.</p>
 </section>
 <section id="experiments" class="level2">
 <h2 class="anchored" data-anchor-id="experiments">Experiments</h2>
