@@ -208,7 +208,7 @@ background-size: cover;
 </section>
 <section id="materials-and-methods" class="level2">
 <h2 class="anchored" data-anchor-id="materials-and-methods">Materials and Methods</h2>
-<div id="cell-2" class="cell" data-execution_count="1">
+<div id="cell-2" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -218,36 +218,28 @@ background-size: cover;
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> models <span class="im">import</span> evaluate_DT</span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> models <span class="im">import</span> evaluate_RF</span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.tree <span class="im">import</span> DecisionTreeRegressor</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.tree <span class="im">import</span> DecisionTreeRegressor</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">'ignore'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="our-data" class="level3">
 <h3 class="anchored" data-anchor-id="our-data">Our Data</h3>
 <p>All of our data came from the Food Security and Nutrition Analysis Unit Dashboard for Somalia (FSNAU). This organization collects data related to food and security in Somalia. FSNAU provides access to this data through a public facing dashboard. Users can select what data they would like to look at and which time frames (in six month increments).</p>
 <p>For our data, focused on creating two datasets, one where we drop missing values and one where we impute them. Within these datasets, we further split them into all available features, and just the top nine features as recommended by the UNHCR in their previous work with this data (project <a href="https://jetson.unhcr.org/tech.html">Jetson</a>). Due to data availability, we focused on data from 2015 - 2024.</p>
-<div id="cell-4" class="cell" data-execution_count="2">
+<div id="cell-4" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load data</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">'data/combined_data.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/3933340257.py:2: DtypeWarning: Columns (17,23) have mixed types. Specify dtype option on import or set low_memory=False.
-  df = pd.read_csv('data/combined_data.csv')</code></pre>
-</div>
 </div>
 </section>
 <section id="our-approach" class="level3">
 <h3 class="anchored" data-anchor-id="our-approach">Our Approach</h3>
 <p>The goal of our models was to predict the number of refugees arriving in a certain district in Somalia. We used the “Arrivals” column of our data as the target feature for our models to predict. For training features, we either trained our models on all features available on the FSNAU dashboard, or the nine features recommended by the UNHCR (region, district, month, year, rainfall, number of conflict fatalities, number of conflict incidents, water price, and goat price). We chose to run models trained on these nine features because the UN found these particularly helpful when building their own machine learning models (<a href="https://jetson.unhcr.org/tech.html">Jetson Data</a>). For all models, we dropped the feature describing the number of departures because such data can only be collected after the fact. That is, at the time this model would be run in a “real” scenario, there would be no way of knowing the number of departures in a district for the entire month; a month must first pass for this data to become known. Finally, we split the data into train and test groups, with 80% of the data in the train split and 20% of the data in the test split. Depending on the dataset used, the exact number of rows varied, but for the dataset we found to be best (dropping missing values and only using the nine best features), we had 51,812 train rows and 12,953 test rows.</p>
-<div id="cell-6" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create four dataframes of the data</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>df_dropna <span class="op">=</span> dropNA(df)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>df_dropna_t9 <span class="op">=</span> dropNA(df, top_9<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>df_impute <span class="op">=</span> impute(df)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>df_impute_t9 <span class="op">=</span> impute(df, top_9<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>/Users/mihirsingh/anaconda3/envs/ml-0451/lib/python3.9/site-packages/sklearn/impute/_iterative.py:796: ConvergenceWarning: [IterativeImputer] Early stopping criterion not reached.
-  warnings.warn(
-/Users/mihirsingh/anaconda3/envs/ml-0451/lib/python3.9/site-packages/sklearn/impute/_iterative.py:796: ConvergenceWarning: [IterativeImputer] Early stopping criterion not reached.
-  warnings.warn(</code></pre>
-</div>
+<div id="cell-6" class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create four dataframes of the data</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>df_dropna <span class="op">=</span> dropNA(df)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>df_dropna_t9 <span class="op">=</span> dropNA(df, top_9<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>df_impute <span class="op">=</span> impute(df)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>df_impute_t9 <span class="op">=</span> impute(df, top_9<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We trained a Linear Regression model, Decision Tree Regressor, and Random Forest Regressor model from Sci-Kit Learn to make our predictions. These models were chosen because predicting the number of refugees arriving is a regression problem, where we want our model to give us an estimate of the number of arrivals in a district. We trained each model on the four datasets we created: drop missing values and use all features, drop missing values and use only the best nine features, impute missing values and use all features, and impute missing values and use only the nine best features. The reason for choosing to both impute and drop missing values is to determine the best approach to deal with these missing values, of which there were many. In fact, out of the 328,856 available rows, only 230 had no missing values. A single missing value in any one feature can render the entire row obsolete in training or testing. The benefit of imputing the data is that we end up with much more data to train and test with, potentially increasing accuracy and decreasing the possibility of overfitting. The drawback is that the data is generally lower quality, as many values are estimates not actual observations. Dropping missing values, on the other hand, leads to a smaller dataset, potentially decreasing accuracy and increasing the possibility of overfitting. The data we are left with, however, is much higher quality since it is composed entirely of actual observations.</p>
 <p>The four datasets that result from this process, as well as their sizes are below:</p>
@@ -282,7 +274,73 @@ background-size: cover;
 <p>We evaluate the models using three different metrics, R<sup>2</sup>, RMSE, and the alarm level classification accuracy. The R<sup>2</sup> value measures how well the model explains the observed data values. RMSE measures the average error for a prediction, with the interpretation being that the RMSE value is the average number of people the predictions are off by. Finally, the classification accuracy measures how often the models correctly predict the alarm level. In other words, the classification accuracy is how often the models can correctly predict whether the arrivals will be less than 1000 people, between 1000 and 5000 people, or greater than 5000 people. The tables below show the model performances when evaluated with each of these metrics on the testing data.</p>
 <section id="linear-regression" class="level3">
 <h3 class="anchored" data-anchor-id="linear-regression">Linear Regression</h3>
-<div id="cell-10" class="cell" data-execution_count="4">
+<div id="cell-10" class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># dropna</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Drop Missing Values, Use All Features:"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>train, test <span class="op">=</span> train_test_split(df_dropna, test_size<span class="op">=</span><span class="fl">0.2</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> train.drop([<span class="st">'Arrivals'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> train[[<span class="st">'Arrivals'</span>]]</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> test.drop([<span class="st">'Arrivals'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>y_test <span class="op">=</span> test[[<span class="st">'Arrivals'</span>]]</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>evaluate_LR(X_train, y_train, X_test, y_test)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co"># dropna top 9</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Drop Missing Values, Use Best Nine Features:"</span>)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>train, test <span class="op">=</span> train_test_split(df_dropna_t9, test_size<span class="op">=</span><span class="fl">0.2</span>)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> train.drop([<span class="st">'Arrivals'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> train[[<span class="st">'Arrivals'</span>]]</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> test.drop([<span class="st">'Arrivals'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>y_test <span class="op">=</span> test[[<span class="st">'Arrivals'</span>]]</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>evaluate_LR(X_train, y_train, X_test, y_test)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co"># impute</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Impute Missing Values, Use All Features:"</span>)</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>train, test <span class="op">=</span> train_test_split(df_impute, test_size<span class="op">=</span><span class="fl">0.2</span>)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> train.drop([<span class="st">'Arrivals'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> train[[<span class="st">'Arrivals'</span>]]</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> test.drop([<span class="st">'Arrivals'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>y_test <span class="op">=</span> test[[<span class="st">'Arrivals'</span>]]</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>evaluate_LR(X_train, y_train, X_test, y_test)</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="co"># impute top 9</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Impute Missing Values, Use Best Nine Features:"</span>)</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>train, test <span class="op">=</span> train_test_split(df_impute_t9, test_size<span class="op">=</span><span class="fl">0.2</span>)</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> train.drop([<span class="st">'Arrivals'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> train[[<span class="st">'Arrivals'</span>]]</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> test.drop([<span class="st">'Arrivals'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>y_test <span class="op">=</span> test[[<span class="st">'Arrivals'</span>]]</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>evaluate_LR(X_train, y_train, X_test, y_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Drop Missing Values, Use All Features:
+score: -0.5120080054803344
+rmse: 4004.408898337328
+classification accuracy: 1.0
+
+
+Drop Missing Values, Use Best Nine Features:
+score: 0.022127246581247872
+rmse: 5531.715825977417
+classification accuracy: 0.46383077279394735
+
+
+Impute Missing Values, Use All Features:
+score: 0.33164398083006263
+rmse: 3641.15860937481
+classification accuracy: 0.6846834519248313
+
+
+Impute Missing Values, Use Best Nine Features:
+score: 0.09979970878891353
+rmse: 4044.098286302458
+classification accuracy: 0.6812321352551237
+
+</code></pre>
+</div>
+</div>
+</section>
+<section id="decision-tree" class="level3">
+<h3 class="anchored" data-anchor-id="decision-tree">Decision Tree</h3>
+<div id="cell-12" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># dropna</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Drop Missing Values, Use All Features:"</span>)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>train, test <span class="op">=</span> train_test_split(df_dropna, test_size<span class="op">=</span><span class="fl">0.2</span>)</span>
@@ -290,7 +348,7 @@ background-size: cover;
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> train[[<span class="st">'Arrivals'</span>]]</span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> test.drop([<span class="st">'Arrivals'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>y_test <span class="op">=</span> test[[<span class="st">'Arrivals'</span>]]</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>evaluate_LR(X_train, y_train, X_test, y_test)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>evaluate_DT(X_train, y_train, X_test, y_test)</span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co"># dropna top 9</span></span>
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Drop Missing Values, Use Best Nine Features:"</span>)</span>
@@ -299,7 +357,7 @@ background-size: cover;
 <span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> train[[<span class="st">'Arrivals'</span>]]</span>
 <span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> test.drop([<span class="st">'Arrivals'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>y_test <span class="op">=</span> test[[<span class="st">'Arrivals'</span>]]</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>evaluate_LR(X_train, y_train, X_test, y_test)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>evaluate_DT(X_train, y_train, X_test, y_test)</span>
 <span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="co"># impute</span></span>
 <span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Impute Missing Values, Use All Features:"</span>)</span>
@@ -308,7 +366,7 @@ background-size: cover;
 <span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> train[[<span class="st">'Arrivals'</span>]]</span>
 <span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> test.drop([<span class="st">'Arrivals'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>y_test <span class="op">=</span> test[[<span class="st">'Arrivals'</span>]]</span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>evaluate_LR(X_train, y_train, X_test, y_test)</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>evaluate_DT(X_train, y_train, X_test, y_test)</span>
 <span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="co"># impute top 9</span></span>
 <span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Impute Missing Values, Use Best Nine Features:"</span>)</span>
@@ -317,38 +375,38 @@ background-size: cover;
 <span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> train[[<span class="st">'Arrivals'</span>]]</span>
 <span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> test.drop([<span class="st">'Arrivals'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>y_test <span class="op">=</span> test[[<span class="st">'Arrivals'</span>]]</span>
-<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>evaluate_LR(X_train, y_train, X_test, y_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>evaluate_DT(X_train, y_train, X_test, y_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Drop Missing Values, Use All Features:
-score: 0.3482714151602433
-rmse: 6007.911266695554
-classification accuracy: 0.9636363636363636
+score: -1.0293524315764553
+rmse: 1832.0020891214767
+classification accuracy: 0.9454545454545454
 
 
 Drop Missing Values, Use Best Nine Features:
-score: 0.022897944998942266
-rmse: 5926.451859349732
-classification accuracy: 0.4821276924264649
+score: 0.9086362235559209
+rmse: 1686.7363933175686
+classification accuracy: 0.9932834092488226
 
 
 Impute Missing Values, Use All Features:
-score: 0.3370639234088745
-rmse: 3615.1588216625223
-classification accuracy: 0.6830566198382291
+score: 0.9141093025870605
+rmse: 1243.3944680840762
+classification accuracy: 0.8610654989965335
 
 
 Impute Missing Values, Use Best Nine Features:
-score: 0.10233892669667688
-rmse: 4179.879082632052
-classification accuracy: 0.683391108678465
+score: 0.8600721201782545
+rmse: 1622.8755875767067
+classification accuracy: 0.8631940643434897
 
 </code></pre>
 </div>
 </div>
 </section>
-<section id="decision-tree" class="level3">
-<h3 class="anchored" data-anchor-id="decision-tree">Decision Tree</h3>
-<div id="cell-12" class="cell" data-execution_count="5">
+<section id="random-forest" class="level3">
+<h3 class="anchored" data-anchor-id="random-forest">Random Forest</h3>
+<div id="cell-14" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># dropna</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Drop Missing Values, Use All Features:"</span>)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>train, test <span class="op">=</span> train_test_split(df_dropna, test_size<span class="op">=</span><span class="fl">0.2</span>)</span>
@@ -356,7 +414,7 @@ classification accuracy: 0.683391108678465
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> train[[<span class="st">'Arrivals'</span>]]</span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> test.drop([<span class="st">'Arrivals'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>y_test <span class="op">=</span> test[[<span class="st">'Arrivals'</span>]]</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>evaluate_DT(X_train, y_train, X_test, y_test)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>evaluate_RF(X_train, y_train, X_test, y_test)</span>
 <span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co"># dropna top 9</span></span>
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Drop Missing Values, Use Best Nine Features:"</span>)</span>
@@ -365,7 +423,7 @@ classification accuracy: 0.683391108678465
 <span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> train[[<span class="st">'Arrivals'</span>]]</span>
 <span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> test.drop([<span class="st">'Arrivals'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>y_test <span class="op">=</span> test[[<span class="st">'Arrivals'</span>]]</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>evaluate_DT(X_train, y_train, X_test, y_test)</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>evaluate_RF(X_train, y_train, X_test, y_test)</span>
 <span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="co"># impute</span></span>
 <span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Impute Missing Values, Use All Features:"</span>)</span>
@@ -374,7 +432,7 @@ classification accuracy: 0.683391108678465
 <span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> train[[<span class="st">'Arrivals'</span>]]</span>
 <span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> test.drop([<span class="st">'Arrivals'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>y_test <span class="op">=</span> test[[<span class="st">'Arrivals'</span>]]</span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>evaluate_DT(X_train, y_train, X_test, y_test)</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>evaluate_RF(X_train, y_train, X_test, y_test)</span>
 <span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a><span class="co"># impute top 9</span></span>
 <span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Impute Missing Values, Use Best Nine Features:"</span>)</span>
@@ -383,117 +441,41 @@ classification accuracy: 0.683391108678465
 <span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> train[[<span class="st">'Arrivals'</span>]]</span>
 <span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> test.drop([<span class="st">'Arrivals'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>y_test <span class="op">=</span> test[[<span class="st">'Arrivals'</span>]]</span>
-<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>evaluate_DT(X_train, y_train, X_test, y_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>evaluate_RF(X_train, y_train, X_test, y_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Drop Missing Values, Use All Features:
-score: -0.2577396836861845
-rmse: 1616.41930878661
-classification accuracy: 0.9454545454545454
+score: -0.41771466376163113
+rmse: 1925.9235858153875
+classification accuracy: 0.9272727272727272
 
 
 Drop Missing Values, Use Best Nine Features:
-score: 0.8224130508762205
-rmse: 2419.35730545976
-classification accuracy: 0.9943642399444145
+score: 0.963600818038985
+rmse: 1194.1962938556157
+classification accuracy: 0.9922797807457732
 
 
 Impute Missing Values, Use All Features:
-score: 0.884611700132044
-rmse: 1455.5939149959577
-classification accuracy: 0.8621449857082041
+score: 0.9530521565094427
+rmse: 971.2710461948245
+classification accuracy: 0.8653834458432159
 
 
 Impute Missing Values, Use Best Nine Features:
-score: 0.7660378064491877
-rmse: 2151.5615609793967
-classification accuracy: 0.8619625372498936
+score: 0.9251482120105943
+rmse: 1137.0446510214172
+classification accuracy: 0.8624186583956699
 
 </code></pre>
-</div>
-</div>
-</section>
-<section id="random-forest" class="level3">
-<h3 class="anchored" data-anchor-id="random-forest">Random Forest</h3>
-<div id="cell-14" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># dropna</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Drop Missing Values, Use All Features:"</span>)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>train, test <span class="op">=</span> train_test_split(df_dropna, test_size<span class="op">=</span><span class="fl">0.2</span>)</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> train.drop([<span class="st">'Arrivals'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> train[[<span class="st">'Arrivals'</span>]]</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> test.drop([<span class="st">'Arrivals'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>y_test <span class="op">=</span> test[[<span class="st">'Arrivals'</span>]]</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>evaluate_RF(X_train, y_train, X_test, y_test)</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co"># dropna top 9</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Drop Missing Values, Use Best Nine Features:"</span>)</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>train, test <span class="op">=</span> train_test_split(df_dropna_t9, test_size<span class="op">=</span><span class="fl">0.2</span>)</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> train.drop([<span class="st">'Arrivals'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> train[[<span class="st">'Arrivals'</span>]]</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> test.drop([<span class="st">'Arrivals'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>y_test <span class="op">=</span> test[[<span class="st">'Arrivals'</span>]]</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>evaluate_RF(X_train, y_train, X_test, y_test)</span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="co"># impute</span></span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Impute Missing Values, Use All Features:"</span>)</span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>train, test <span class="op">=</span> train_test_split(df_impute, test_size<span class="op">=</span><span class="fl">0.2</span>)</span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> train.drop([<span class="st">'Arrivals'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> train[[<span class="st">'Arrivals'</span>]]</span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> test.drop([<span class="st">'Arrivals'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>y_test <span class="op">=</span> test[[<span class="st">'Arrivals'</span>]]</span>
-<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>evaluate_RF(X_train, y_train, X_test, y_test)</span>
-<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a><span class="co"># impute top 9</span></span>
-<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Impute Missing Values, Use Best Nine Features:"</span>)</span>
-<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>train, test <span class="op">=</span> train_test_split(df_impute_t9, test_size<span class="op">=</span><span class="fl">0.2</span>)</span>
-<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> train.drop([<span class="st">'Arrivals'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> train[[<span class="st">'Arrivals'</span>]]</span>
-<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> test.drop([<span class="st">'Arrivals'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>y_test <span class="op">=</span> test[[<span class="st">'Arrivals'</span>]]</span>
-<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>evaluate_RF(X_train, y_train, X_test, y_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Drop Missing Values, Use All Features:
-score: -69.55430403583647
-rmse: 517.3647936575928
-classification accuracy: 0.9818181818181818
-
-
-Drop Missing Values, Use Best Nine Features:
-score: 0.8588988636949256
-rmse: 2337.534929514002
-classification accuracy: 0.9908901412800124
-
-
-Impute Missing Values, Use All Features:
-score: 0.9580527556370189
-rmse: 875.8166724379914
-classification accuracy: 0.8656571185306817
-
-
-Impute Missing Values, Use Best Nine Features:
-score: 0.9219996587812174
-rmse: 1234.1225582893007
-classification accuracy: 0.8622666180137445
-
-</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>/Users/mihirsingh/anaconda3/envs/ml-0451/lib/python3.9/site-packages/sklearn/base.py:1151: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples,), for example using ravel().
-  return fit_method(estimator, *args, **kwargs)
-/Users/mihirsingh/anaconda3/envs/ml-0451/lib/python3.9/site-packages/sklearn/base.py:1151: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples,), for example using ravel().
-  return fit_method(estimator, *args, **kwargs)
-/Users/mihirsingh/anaconda3/envs/ml-0451/lib/python3.9/site-packages/sklearn/base.py:1151: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples,), for example using ravel().
-  return fit_method(estimator, *args, **kwargs)
-/Users/mihirsingh/anaconda3/envs/ml-0451/lib/python3.9/site-packages/sklearn/base.py:1151: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples,), for example using ravel().
-  return fit_method(estimator, *args, **kwargs)</code></pre>
 </div>
 </div>
 </section>
 <section id="dataset-outliers" class="level3">
 <h3 class="anchored" data-anchor-id="dataset-outliers">Dataset Outliers</h3>
 <p>The dataset contained several large outliers for our target column (“Arrivals”) that were throwing off the RMSE calculations. The 95th percentile of arrivals was 3,701; in other words 90% of arrivales were 3,701 or fewer people. However, the maximum number of arrivals for a single observation was 259,678. This implies the existence of some large outliers in the dataset that skew the RMSE calculation, making the models seem to perform worse than they actually do.</p>
-<div id="cell-16" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'90th percentile: </span><span class="ch">\n</span><span class="sc">{</span>df[<span class="st">"Arrivals"</span>]<span class="sc">.</span>quantile(q<span class="op">=</span><span class="fl">0.95</span>)<span class="sc">}</span><span class="ss"> </span><span class="ch">\n</span><span class="ss">'</span>)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'arrivals statistics: </span><span class="ch">\n</span><span class="sc">{</span>df[<span class="st">"Arrivals"</span>]<span class="sc">.</span>describe()<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-16" class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'90th percentile: </span><span class="ch">\n</span><span class="sc">{</span>df[<span class="st">"Arrivals"</span>]<span class="sc">.</span>quantile(q<span class="op">=</span><span class="fl">0.95</span>)<span class="sc">}</span><span class="ss"> </span><span class="ch">\n</span><span class="ss">'</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'arrivals statistics: </span><span class="ch">\n</span><span class="sc">{</span>df[<span class="st">"Arrivals"</span>]<span class="sc">.</span>describe()<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>90th percentile: 
 3701.0 
@@ -514,15 +496,15 @@ Name: Arrivals, dtype: float64</code></pre>
 <section id="impute-disadvantages" class="level3">
 <h3 class="anchored" data-anchor-id="impute-disadvantages">Impute Disadvantages</h3>
 <p>When we impute the data, we are filling in the missing values with an estimate based on the other present features. However, when we impute this dataset, we actually end up with some negative values in the arrival column, which is impossible. This can be problematic because it can teach the models to predict negative arrivals, which are impossible observations. We can see that 16% of our imputed data is negative.</p>
-<div id="cell-18" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> count_negative(values):</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    count <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> value <span class="kw">in</span> values:</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> value <span class="op">&lt;</span> <span class="dv">0</span>:</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>            count <span class="op">+=</span> <span class="dv">1</span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> count</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"percent of imputed arrival data that is negative: </span><span class="sc">{</span>count_negative(df_impute[<span class="st">'Arrivals'</span>])<span class="op">/</span> <span class="bu">len</span>(y_train[<span class="st">'Arrivals'</span>]) <span class="op">*</span> <span class="dv">100</span><span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-18" class="cell" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> count_negative(values):</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    count <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> value <span class="kw">in</span> values:</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> value <span class="op">&lt;</span> <span class="dv">0</span>:</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>            count <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> count</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"percent of imputed arrival data that is negative: </span><span class="sc">{</span>count_negative(df_impute[<span class="st">'Arrivals'</span>])<span class="op">/</span> <span class="bu">len</span>(y_train[<span class="st">'Arrivals'</span>]) <span class="op">*</span> <span class="dv">100</span><span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>percent of imputed arrival data that is negative: 16.29023429779082</code></pre>
 </div>
@@ -531,629 +513,82 @@ Name: Arrivals, dtype: float64</code></pre>
 <section id="data-and-model-visualizations" class="level3">
 <h3 class="anchored" data-anchor-id="data-and-model-visualizations">Data and Model Visualizations</h3>
 <p>We created the following visualizations of our data and our best model’s (Decision Tree trained on `df_dropna_t9) predictions. The following plot shows how the number of refugee arrivals changes over time.</p>
-<div id="cell-20" class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>counts <span class="op">=</span> df.groupby([<span class="st">'Year'</span>, <span class="st">'Month'</span>])[<span class="st">'Arrivals'</span>].<span class="bu">sum</span>().reset_index()</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Set figure size</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">18</span>, <span class="dv">6</span>))</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine year and month to create a new column for x-axis</span></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>counts[<span class="st">'Year-Month'</span>] <span class="op">=</span> counts[<span class="st">'Year'</span>].astype(<span class="bu">str</span>) <span class="op">+</span> <span class="st">'/'</span> <span class="op">+</span> counts[<span class="st">'Month'</span>].astype(<span class="bu">str</span>)</span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>counts <span class="op">=</span> counts.sort_values(by<span class="op">=</span>[<span class="st">'Year-Month'</span>, <span class="st">'Arrivals'</span>], ascending<span class="op">=</span>[<span class="va">True</span>, <span class="va">True</span>])</span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>months <span class="op">=</span> [<span class="st">'Jan'</span>, <span class="st">'Feb'</span>, <span class="st">'Mar'</span>, <span class="st">'Apr'</span>, <span class="st">'May'</span>, <span class="st">'Jun'</span>, <span class="st">'Jul'</span>, <span class="st">'Aug'</span>, <span class="st">'Sep'</span>, <span class="st">'Oct'</span>, <span class="st">'Nov'</span>, <span class="st">'Dec'</span>]</span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(counts[<span class="st">'Year-Month'</span>])):</span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>    update <span class="op">=</span> counts[<span class="st">'Year-Month'</span>][i]</span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    updateSlice <span class="op">=</span> update[<span class="op">-</span><span class="dv">1</span>]</span>
-<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>    updateMonth <span class="op">=</span>  months[<span class="bu">int</span>(updateSlice)]</span>
-<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>    counts[<span class="st">'Year-Month'</span>][i] <span class="op">=</span> counts[<span class="st">'Year-Month'</span>][i][<span class="dv">0</span>:<span class="dv">4</span>] <span class="op">+</span> <span class="st">'/'</span> <span class="op">+</span> updateMonth</span>
-<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Set x-axis ticks and labels</span></span>
-<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>x_ticks <span class="op">=</span> counts[<span class="st">'Year-Month'</span>].unique()</span>
-<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>x_labels <span class="op">=</span> counts[<span class="st">'Month'</span>].unique()</span>
-<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Loop through each year and plot the number of orders as bars</span></span>
-<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> year <span class="kw">in</span> counts[<span class="st">'Year'</span>].unique():</span>
-<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>    year_data <span class="op">=</span> counts[counts[<span class="st">'Year'</span>] <span class="op">==</span> year]</span>
-<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>    plt.bar(year_data[<span class="st">'Year-Month'</span>], year_data[<span class="st">'Arrivals'</span>], label<span class="op">=</span><span class="bu">str</span>(year), alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
-<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Set x-axis ticks and labels</span></span>
-<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>plt.xticks(ticks<span class="op">=</span><span class="bu">range</span>(<span class="bu">len</span>(x_ticks)))</span>
-<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Rotate x-axis labels for better readability</span></span>
-<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">90</span>, ha<span class="op">=</span><span class="st">'right'</span>)</span>
-<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Add labels and title</span></span>
-<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Month'</span>)</span>
-<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Number of Arrivals'</span>)</span>
-<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Number of Arrivals by Month Over Time'</span>)</span>
-<span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a>plt.legend(title<span class="op">=</span><span class="st">'Year'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth
-/var/folders/fv/_v7myjl904983sbb39qbkzw40000gn/T/ipykernel_98185/1215175562.py:15: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  counts['Year-Month'][i] = counts['Year-Month'][i][0:4] + '/' + updateMonth</code></pre>
-</div>
+<div id="cell-20" class="cell" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>counts <span class="op">=</span> (df.groupby([<span class="st">'Year'</span>, <span class="st">'Month'</span>])[<span class="st">'Arrivals'</span>].<span class="bu">sum</span>().reset_index()).copy()</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Set figure size</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">18</span>, <span class="dv">6</span>))</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine year and month to create a new column for x-axis</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>counts[<span class="st">'Year-Month'</span>] <span class="op">=</span> counts[<span class="st">'Year'</span>].astype(<span class="bu">str</span>) <span class="op">+</span> <span class="st">'/'</span> <span class="op">+</span> counts[<span class="st">'Month'</span>].astype(<span class="bu">str</span>)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>counts <span class="op">=</span> counts.sort_values(by<span class="op">=</span>[<span class="st">'Year-Month'</span>, <span class="st">'Arrivals'</span>], ascending<span class="op">=</span>[<span class="va">True</span>, <span class="va">True</span>])</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>months <span class="op">=</span> [<span class="st">'Jan'</span>, <span class="st">'Feb'</span>, <span class="st">'Mar'</span>, <span class="st">'Apr'</span>, <span class="st">'May'</span>, <span class="st">'Jun'</span>, <span class="st">'Jul'</span>, <span class="st">'Aug'</span>, <span class="st">'Sep'</span>, <span class="st">'Oct'</span>, <span class="st">'Nov'</span>, <span class="st">'Dec'</span>]</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(counts[<span class="st">'Year-Month'</span>])):</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    update <span class="op">=</span> counts[<span class="st">'Year-Month'</span>][i]</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    updateSlice <span class="op">=</span> update[<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    updateMonth <span class="op">=</span>  months[<span class="bu">int</span>(updateSlice)]</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>    counts[<span class="st">'Year-Month'</span>][i] <span class="op">=</span> counts[<span class="st">'Year-Month'</span>][i][<span class="dv">0</span>:<span class="dv">4</span>] <span class="op">+</span> <span class="st">'/'</span> <span class="op">+</span> updateMonth</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Set x-axis ticks and labels</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>x_ticks <span class="op">=</span> counts[<span class="st">'Year-Month'</span>].unique()</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>x_labels <span class="op">=</span> counts[<span class="st">'Month'</span>].unique()</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Loop through each year and plot the number of orders as bars</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> year <span class="kw">in</span> counts[<span class="st">'Year'</span>].unique():</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>    year_data <span class="op">=</span> counts[counts[<span class="st">'Year'</span>] <span class="op">==</span> year]</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>    plt.bar(year_data[<span class="st">'Year-Month'</span>], year_data[<span class="st">'Arrivals'</span>], label<span class="op">=</span><span class="bu">str</span>(year), alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Set x-axis ticks and labels</span></span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>plt.xticks(ticks<span class="op">=</span><span class="bu">range</span>(<span class="bu">len</span>(x_ticks)))</span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Rotate x-axis labels for better readability</span></span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">90</span>, ha<span class="op">=</span><span class="st">'right'</span>)</span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Add labels and title</span></span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Month'</span>)</span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Number of Arrivals'</span>)</span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Number of Arrivals by Month Over Time'</span>)</span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>plt.legend(title<span class="op">=</span><span class="st">'Year'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/cell-10-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="index_files/figure-html/cell-10-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>We see that many of the arrivals occur in the summer months and that these arrival numbers are significantly larger than in the winter months. This trend seems to hold before and after the COVID-19 pandemic. We also see that there are more arrivals starting from 2017 onwards, this might be due to better data collection, but it is hard to know for sure.</p>
 <p>We can also visualize how our model does in predicting arrivals. First, we build our best model and calculate the differences between its predictions and the true vales.</p>
-<div id="cell-22" class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># build our best model</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>train, test <span class="op">=</span> train_test_split(df_dropna_t9, test_size<span class="op">=</span><span class="fl">0.2</span>)</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> train.drop([<span class="st">'Arrivals'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> train[[<span class="st">'Arrivals'</span>]]</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> test.drop([<span class="st">'Arrivals'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>y_test <span class="op">=</span> test[[<span class="st">'Arrivals'</span>]]</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>DT <span class="op">=</span> DecisionTreeRegressor()</span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>DT.fit(X_train, y_train)</span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>preds <span class="op">=</span> DT.predict((X_test))</span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>y_true <span class="op">=</span> y_test.values.flatten()</span>
-<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>diffs <span class="op">=</span> preds <span class="op">-</span> y_true</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-22" class="cell" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># build our best model</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>train, test <span class="op">=</span> train_test_split(df_dropna_t9, test_size<span class="op">=</span><span class="fl">0.2</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> train.drop([<span class="st">'Arrivals'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> train[[<span class="st">'Arrivals'</span>]]</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> test.drop([<span class="st">'Arrivals'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>y_test <span class="op">=</span> test[[<span class="st">'Arrivals'</span>]]</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>DT <span class="op">=</span> DecisionTreeRegressor()</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>DT.fit(X_train, y_train)</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>preds <span class="op">=</span> DT.predict((X_test))</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>y_true <span class="op">=</span> y_test.values.flatten()</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>diffs <span class="op">=</span> preds <span class="op">-</span> y_true</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>When we plot a histogram of the differences between our best models predictions and the true values, we can see that the model makes very few significantly wrong predictions (a prediction off by 10 or more people). The plot is on a logarithmic x-axis, to show the number of mispredictions within one order of magnitude. Only mispredictions of 10 people or more are plotted. This supports our hypothesis that the large RMSE is coming from only a few predictions that are very wrong.</p>
-<div id="cell-24" class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot only the differences greater than 100</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>bins <span class="op">=</span> [<span class="dv">10</span>, <span class="dv">100</span>, <span class="dv">1000</span>, <span class="dv">10000</span>, <span class="dv">100000</span>]</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>plt.hist(diffs, bins<span class="op">=</span>bins, edgecolor<span class="op">=</span><span class="st">'black'</span>)</span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>plt.xscale(<span class="st">'log'</span>)</span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Add labels and title</span></span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Difference'</span>)</span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Frequency'</span>)</span>
-<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Histogram of Differences'</span>)</span>
-<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-24" class="cell" data-execution_count="25">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot only the differences greater than 100</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>bins <span class="op">=</span> [<span class="dv">10</span>, <span class="dv">100</span>, <span class="dv">1000</span>, <span class="dv">10000</span>, <span class="dv">100000</span>]</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>plt.hist(diffs, bins<span class="op">=</span>bins, edgecolor<span class="op">=</span><span class="st">'black'</span>)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>plt.xscale(<span class="st">'log'</span>)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Add labels and title</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Difference'</span>)</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Frequency'</span>)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Histogram of Differences'</span>)</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -1163,10 +598,10 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 </div>
 </div>
 <p>Finally, we can calculate the percent of of the time that the model made a perfect prediction, i.e.&nbsp;predicted the exact number of arrivals. We can see that 98% of the time, the model correctly predicted the exact number of arrivals, further supporting the hypothesis the model is very accurate and the large RMSE comes from a few bad predictions that were very off.</p>
-<div id="cell-26" class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'percent of perfect predictions: </span><span class="sc">{</span>(np.count_nonzero(diffs <span class="op">==</span> <span class="dv">0</span>) <span class="op">/</span> <span class="bu">len</span>(diffs))<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-26" class="cell" data-execution_count="26">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'percent of perfect predictions: </span><span class="sc">{</span>(np.count_nonzero(diffs <span class="op">==</span> <span class="dv">0</span>) <span class="op">/</span> <span class="bu">len</span>(diffs))<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>percent of perfect predictions: 0.9796958233613835</code></pre>
+<pre><code>percent of perfect predictions: 0.9805450474793485</code></pre>
 </div>
 </div>
 </section>
@@ -1290,15 +725,9 @@ Decision Tree on <code>df_dropna_t9</code>
 <section id="jake" class="level3">
 <h3 class="anchored" data-anchor-id="jake">Jake</h3>
 <p>I helped build a web scraper for market data. When we started building the models, I helped work on the ideal way to clean up the data, including imputing and removing NAs. I helped build and expand a few of the early models and expand on Jamie’s original neural network. I helped with the presentation and for our blog, I wrote our results section and our conclusion, drawing upon the data we found.</p>
-</section>
-</section>
-<section id="personal-reflection" class="level2">
-<h2 class="anchored" data-anchor-id="personal-reflection">Personal Reflection</h2>
-<p>This project provided me with the opportunity to apply machine learning models like a linear regression, decision tree, and random forests to the socially impactful regression challenge that is predicting the quantity of refugee arrivals in Somalia’s various districts. Throughout this process, I learned how to think strategically about data collection, data preparation, model training, and model evaluation. It was up to our group to determine why our models behaved the way they did, or decide what data we would even look at. Having these opportunities was valuable because they forced me to think about the machine learning process beyond the algorithm. I truly felt like I had ownership over the choices being made and felt that these choices originated from a reasonable decision-making process. Our project was generally pretty successful in its goal of predicting refugee displacement. At first, there were large root mean squared errors and low R squared scores, but we were able to identify that this might be because of some significant outliers in our dataset affecting our RMSE. Our model usually got a perfect prediction 98% of the time, so it was pretty accurate from a regression standpoint. Our model also did well when its predictions were classified into different severity bins matching the same cutoffs used by the UN in the real world. Our best models had a classification accuracy of 99.5%.</p>
-<p>I think I will best remember the process of analyzing our model and conducting experiments to find the best output. We spent lots of time critically examining what went wrong with our initial models and spent lots of time looking at the data to better understand what choices we needed to make to create an accurate model. This practice of thinking strategically about our data and models will be useful in the future for any other machine learning tasks. I am also happy that our project has the potential to have a positive impact on society. I had wanted to explore how machine learning can be used for good since I feel that much of the focus on the ethics in machine learning is spent on how it can harm. While that is very important to consider, I am happy that I got to explore how machine learning might be used as a force for good through this project.</p>
-<p>Ultimately, this project gave me insight into what it is like to develop a model from scratch to solve a real-world problem on some real-world data. I will take away the process of thinking critically about the choices we implemented into our code. By working on this project, I developed the ethical awareness, technical skills, and analysis skills required to build an ethical and accurate model.</p>
 
 
+</section>
 </section>
 </section>
 
